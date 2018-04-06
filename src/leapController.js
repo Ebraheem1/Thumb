@@ -1,6 +1,5 @@
-import { backgroundMode, setBackGroundMode, adductionState, movementState, thumbState, width, height, drawElipse 
-, checkDistMine, setGameMode, playLaser, progressBarColor, thumbGame, adductionGame, abductionGame,
- gameMode, setThumbState} from '../logic';
+import { thumbState, width, height, checkDistMine, playLaser, progressBarColor,
+   thumbGame, setThumbState} from '../logic';
 //-- Leap Bones
 
 
@@ -14,40 +13,13 @@ var middleAngle = 0;
 var ringAngle = 0;
 var pinkyAngle = 0;
 
-function handAdduction() {
-    var mainCondition = (indexMidAngle <= 10) && (midRingAngle <= 10) && (ringPinkyAngle <= 10);
-    if(mainCondition && (!adductionState))
-    {
-      adductionState = 1;
-      return true;
-    }
-    else if((!mainCondition) && (adductionState))
-    {
-      adductionState = 0;
-      return false;
-    }
-    else
-      return false;
-};
 var options = {
     background: true,
     useAllPlugins: true,
     enableGestures: true
 };
 
-function checkMovement(){
-    if((indexAngle < 0) && (middleAngle < 0) && (ringAngle < 0) && (pinkyAngle < 0) && (movementState)){
-      movementState = 0;
-      return false;
-    }
-    else if ((indexAngle > 0) && (middleAngle > 0) && (ringAngle > 0) && (pinkyAngle > 0) && (!movementState))
-    {
-      movementState = 1;
-      return true;
-    }
-    else 
-      return false;
-};
+
 
 
 var measuringAngleBetweenFingers = function(hand)
@@ -101,21 +73,11 @@ function checkThumb() {
 var controller= Leap.loop(options, function(frame)
 {
   if((frame.hands.length == 1)){
-    if(backgroundMode)
-    {
-      var pos = frame.pointables[1].stabilizedTipPosition;
-      var normPos = frame.interactionBox.normalizePoint(pos, true);
-      var x = width * normPos[0];
-      var y = height * (1 - normPos[1]);
-      drawElipse(x, y);
-    }
-    else if(!backgroundMode)
-    {
-      checkDistMine(frame.hands[0]);
-      measuringAngleBetweenFingers(frame.hands[0]);
-      if((gameMode == 0 && checkThumb()) || (gameMode == 1 && handAdduction()) || (gameMode == 2 && checkMovement())) {
-        playLaser();
-      }
+
+    checkDistMine(frame.hands[0]);
+    measuringAngleBetweenFingers(frame.hands[0]);
+    if(checkThumb()) {
+      playLaser();
     }
   }
   else if(frame.hands.length == 0)
@@ -123,23 +85,4 @@ var controller= Leap.loop(options, function(frame)
     progressBarColor(false);
   }
 
-});
-controller.on("gesture", function(gesture){
-    if(gesture.type == "keyTap")
-    {
-        if(thumbGame)
-        {
-          
-          setGameMode(0);
-          setBackGroundMode(false);
-        }else if(adductionGame)
-        {
-          setGameMode(1);
-          setBackGroundMode(false);
-        }else if(abductionGame)
-        {
-          setGameMode(2);
-          setBackGroundMode(false);
-        }
-    }
 });
