@@ -3,7 +3,7 @@ import { thumbState, width, height, checkDistMine, playLaser, progressBarColor,
 //-- Leap Bones
 
 
-var Leap = require('leapjs');  
+var Leap = require('leapjs');
 var thumbIndexAngle = 0;
 var indexMidAngle = 0;
 var midRingAngle = 0;
@@ -12,6 +12,11 @@ var indexAngle = 0;
 var middleAngle = 0;
 var ringAngle = 0;
 var pinkyAngle = 0;
+
+var prevprev = 0;
+var prevThumbIndexAngle = 0;
+var prevtime = 0;
+var timetaken = 0;
 
 var options = {
     background: true,
@@ -50,33 +55,43 @@ var measuringAngleBetweenFingers = function(hand)
     if(pinkyDirection[1] < pinkyMetCarpal[1])
     pinkyAngle *= -1;
 
+    prevprev = prevThumbIndexAngle;
+    prevThumbIndexAngle = thumbIndexAngle;
+
     thumbIndexAngle = Math.acos(Leap.vec3.dot(thumbDirection, indexDirection)) * (180 / Math.PI);
     indexMidAngle = Math.acos(Leap.vec3.dot(indexDirection, middleDirection)) * (180 / Math.PI);
     midRingAngle = Math.acos(Leap.vec3.dot(middleDirection, ringDirection)) * (180 / Math.PI);
     ringPinkyAngle = Math.acos(Leap.vec3.dot(ringDirection, pinkyDirection)) * (180 / Math.PI);
+
+    if(thumbIndexAngle <= 30 && prevprev > prevThumbIndexAngle && thumbIndexAngle > prevThumbIndexAngle) prevtime = new Date();
 };
 
 function checkThumb() {
-    if(thumbIndexAngle > 30 && (! thumbState)){
+    if(thumbIndexAngle > 30 && (!thumbState)){
         setThumbState(1);
         return true;
-    } 
+    }
     else if(thumbIndexAngle <= 30 && (thumbState))
     {
         setThumbState(0)
         return false;
     }
-    else 
+    else
         return false;
 };
 
-var controller= Leap.loop(options, function(frame)
+var controller = Leap.loop(options, function(frame)
 {
   if((frame.hands.length == 1)){
 
     checkDistMine(frame.hands[0]);
     measuringAngleBetweenFingers(frame.hands[0]);
+
     if(checkThumb()) {
+      var now = new Date();
+      timetaken = now - prevtime;
+      console.log(timetaken);
+
       playLaser();
     }
   }
