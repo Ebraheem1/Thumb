@@ -30,7 +30,7 @@ var measuringAngleBetweenFingers = function(hand)
     var thumbDirection = hand.thumb.medial.direction();
     var indexDirection = hand.indexFinger.proximal.direction();
     thumbIndexAngle = Math.acos(Leap.vec3.dot(thumbDirection, indexDirection)) * (180 / Math.PI);
-    
+
     if(thumbIndexAngle > maxAngle)
     {
         maxAngle = thumbIndexAngle;
@@ -72,10 +72,22 @@ function doStatistics(){
 
 var controller = Leap.loop(options, function(frame)
 {
-  if((frame.hands.length == 1) && (! gameOver)){
+  if((frame.hands.length == 1) && (! gameOver)) {
+    hand = frame.hands[0];
+    var armDirection = hand.arm.direction();
+    var handDirection = hand.direction;
 
-    checkDistMine(frame.hands[0]);
-    measuringAngleBetweenFingers(frame.hands[0]);
+    var wristAngle = Math.acos(Leap.vec3.dot(armDirection, handDirection)) * (180 / Math.PI);
+
+
+    var palmPosition = hand.stabilizedPalmPosition[0];
+    var pos = frame.pointables[1].stabilizedTipPosition;
+    var normPos = frame.interactionBox.normalizePoint(pos, true);
+    var x = 480 * normPos[0];
+    checkDistMine(palmPosition, x);
+
+
+    measuringAngleBetweenFingers(hand);
 
     if(checkThumb()) {
       var now = new Date();
@@ -89,7 +101,7 @@ var controller = Leap.loop(options, function(frame)
   {
     progressBarColor(false);
   }
-  
+
   if((gameOver) || (pointDis == 2000))
   {
     doStatistics();

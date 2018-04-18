@@ -20,7 +20,7 @@ var sketchProc = function(processing)
   //creation of variables
   //float - decimal
   //PImage - processing.image
-  
+
   //--Background Variables
   var background = 0;
   //--Progress-Bar Colors
@@ -47,9 +47,9 @@ var sketchProc = function(processing)
   var enemyType= 0;
   var enemyH = 0;
   var enemyS = 0;
-  
+
   var standrd= 0;
-  
+
   var sl1y= 0;
   var sl2y= 0;
   var sl3y= 0;
@@ -68,7 +68,7 @@ var sketchProc = function(processing)
   var pH= 0;
   var i= 0;
   var prevFrame = 0;
-  
+
   //Statistics Variables
   var maxTimeText;
   var maxAngleText;
@@ -76,13 +76,13 @@ var sketchProc = function(processing)
   var thresholdTimesText;
 
   var maxTimeRect;
-  
+
   var maxAngleRect;
- 
+
   var minAngleRect;
-  
+
   var thresholdTimesRect;
-  
+
   setTextEnding = function(mt, ma, mna, tt){
     maxTimeText = mt;
     maxAngleText = ma;
@@ -161,7 +161,7 @@ var sketchProc = function(processing)
       processing.text(thresholdTimesText, 25, 120);
       processing.text('Gained Points: ' + slS, 25, 145);
       processing.text('Try Again :)', 25, 170);
-      
+
     }
     else if( pointDis == 2000)
     {
@@ -186,35 +186,12 @@ var sketchProc = function(processing)
   }
 
 
-  checkDistMine = function (hand)
-  {
-    var palmPosition = hand.stabilizedPalmPosition[0];
-    var diff = palmPosition - prevFrame;
-    if(processing.abs(diff) < 20)
-    {
-      posX += diff;
-      prevFrame += diff;
-    }
-    else{
-      if(diff > 0)
-      {
-        posX += 20;
-        prevFrame += 20;
-      }
-      else{
-        posX -= 20;
-        prevFrame -= 20;
-      }
-    }
-    if(posX < 0)
-      posX = 0;
-    else if(posX > 479)
-      posX = 479;
-
+  checkDistMine = function(palmPosition, position) {
+    posX = position;
     if((palmPosition >= -210) && (palmPosition <= 240))
     {
       progressBarColor(true);
-    }else{
+    } else {
       progressBarColor(false);
     }
   }
@@ -282,12 +259,12 @@ var sketchProc = function(processing)
       sl1x = processing.random(0,480);
       sl1y = processing.random(-40,0);
     }
-    
+
     if (sl2y > 360) {
       sl2x = processing.random(0,480);
       sl2y = processing.random(-40,0);
     }
-    
+
     if (sl3y > 360) {
       sl3x = processing.random(0,480);
       sl3y = processing.random(-40,0);
@@ -326,7 +303,7 @@ var sketchProc = function(processing)
       processing.image(player,400,20);
       processing.image(player,360,20);
     }
-    
+
     if (pH == 2) {
       processing.image(player,400,20);
       processing.image(player,360,20);
@@ -336,7 +313,7 @@ var sketchProc = function(processing)
       processing.image(player,360,20);
     }
   }
-  
+
 
   progressBarColor = function(handDetected)
   {
