@@ -10,7 +10,8 @@ export var setThumbState;
 export var gameOver = 0;
 export var setTextEnding;
 export var pointDis = 0;
-
+export var textToBeDisplayed;
+export var setCheatingText;
 //var Processing = require('./processing.js');
 var sketchProc = function(processing)
 {
@@ -74,14 +75,13 @@ var sketchProc = function(processing)
   var maxAngleText;
   var minAngleText;
   var thresholdTimesText;
-
-  var maxTimeRect;
-
-  var maxAngleRect;
-
-  var minAngleRect;
-
-  var thresholdTimesRect;
+  //Cheating Variables
+  textToBeDisplayed = 'NA';
+  
+  setCheatingText = function(text)
+  {
+    textToBeDisplayed = text;
+  }
 
   setTextEnding = function(mt, ma, mna, tt){
     maxTimeText = mt;
@@ -144,11 +144,7 @@ var sketchProc = function(processing)
     processing.image(sL,sl2x,sl2y);
     processing.image(sL,sl3x,sl3y);
     printHealth();
-    if (gameOver == 1) {
-      // processing.image(gDisplay,240,180);
-      // processing.textFont(standrd);
-      // processing.textAlign(processing.CENTER);
-      // processing.text(pointDis, 240, 320);
+    if (gameOver == 1 && pointDis < 2000) {
       var slS = pointDis*0.04 + 10;
       var color = processing.color(255, 255, 255);
       var fontSize = 25;
@@ -163,7 +159,7 @@ var sketchProc = function(processing)
       processing.text('Try Again :)', 25, 170);
 
     }
-    else if( pointDis == 2000)
+    else if( pointDis == 2000 && gameOver != 1)
     {
       var color = processing.color(0, 255, 0);
       var fontSize = 25;
@@ -175,6 +171,14 @@ var sketchProc = function(processing)
       processing.text(minAngleText, 25, 95);
       processing.text(thresholdTimesText, 25, 120);
       processing.text('Congratulations :)', 25, 170);
+    }
+    else if(textToBeDisplayed != 'NA')
+    {
+      var color = processing.color(0, 0, 0);
+      var fontSize = 25;
+      processing.fill(color);
+      processing.textSize(fontSize);
+      processing.text(textToBeDisplayed, 25, 170);
     }
   }
 
@@ -237,7 +241,7 @@ var sketchProc = function(processing)
       enemyH = 2;
     } else {
       enemyY = enemyY + enemyS;
-      if (enemyY > 340) {
+      if (enemyY > 340 && pointDis < 2000) {
         gameOver = 1;
     }
     processing.image(eI,enemyX,enemyY);
