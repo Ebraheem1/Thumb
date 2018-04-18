@@ -92,14 +92,14 @@ var controller = Leap.loop(options, function(frame)
 
     var wristAngle = Math.acos(Leap.vec3.dot(armDirection, handDirection)) * (180 / Math.PI);
     var rotationAngle = hand.roll() * (180 / Math.PI);
-
-    if(Math.floor(rotationAngle) > 7)
+    
+    if(Math.floor(rotationAngle) > 20)
     {
         if(textToBeDisplayed == 'NA')
         {
             setCheatingText('Rotate your hand to the right to be flat.');
         }
-    } else if(Math.floor(rotationAngle) < -7)
+    } else if(Math.floor(rotationAngle) < -20)
     {
         if(textToBeDisplayed == 'NA')
         {
@@ -107,8 +107,16 @@ var controller = Leap.loop(options, function(frame)
         }
     } else if(wristAngle > 20) {
       var flag = directionUp(pos, hand.palmPosition);
-
-      if(flag) setCheatingText('Move your hand down'); else setCheatingText('Move your hand up');
+      if(textToBeDisplayed == 'NA') {
+        
+        if(flag) setCheatingText('Move your hand down');
+        else setCheatingText('Move your hand up');
+      }
+    }else if(hand.grabStrength > 0.1)
+    {
+        if(textToBeDisplayed == 'NA'){
+            setCheatingText('Please Stretch Your Fingers');
+        }
     }
     else {
         setCheatingText('NA');
