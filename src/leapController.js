@@ -70,39 +70,50 @@ function doStatistics(){
     'Number of Times of thresholds are: ' + counter);
 }
 
+function directionUp(tipPosition, metacarpal) {
+  if(tipPosition[1] > metacarpal[1]) return true;
+  else return false;
+}
+
 
 var controller = Leap.loop(options, function(frame)
 {
   if((frame.hands.length == 1) && (! gameOver) && (pointDis < 2000)) {
     var hand = frame.hands[0];
-    
+
+    var palmPosition = hand.stabilizedPalmPosition[0];
+    var pos = frame.pointables[1].stabilizedTipPosition;
+    var normPos = frame.interactionBox.normalizePoint(pos, true);
+    var x = 480 * normPos[0];
+    checkDistMine(palmPosition, x);
+
     var armDirection = hand.arm.direction();
     var handDirection = hand.direction;
 
     var wristAngle = Math.acos(Leap.vec3.dot(armDirection, handDirection)) * (180 / Math.PI);
     var rotationAngle = hand.roll() * (180 / Math.PI);
-    
+
     if(Math.floor(rotationAngle) > 7)
     {
         if(textToBeDisplayed == 'NA')
         {
             setCheatingText('Rotate your hand to the right to be flat.');
         }
-    }else if(Math.floor(rotationAngle) < -7)
+    } else if(Math.floor(rotationAngle) < -7)
     {
         if(textToBeDisplayed == 'NA')
         {
             setCheatingText('Rotate your Hand to the left to be flat.');
         }
+    } else if(wristAngle > 20) {
+      var flag = directionUp(pos, hand.palmPosition);
+
+      if(flag) setCheatingText('Move your hand down'); else setCheatingText('Move your hand up');
     }
-    else{
+    else {
         setCheatingText('NA');
     }
-    var palmPosition = hand.stabilizedPalmPosition[0];
-    var pos = frame.pointables[1].stabilizedTipPosition;
-    var normPos = frame.interactionBox.normalizePoint(pos, true);
-    var x = 480 * normPos[0];
-    checkDistMine(palmPosition, x);
+
     measuringAngleBetweenFingers(hand);
     if(checkThumb()) {
       var now = new Date();
