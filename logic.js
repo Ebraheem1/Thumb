@@ -7,6 +7,9 @@ export var thumbGame = false;
 export var playLaser;
 export var progressBarColor;
 export var setThumbState;
+export var gameOver = 0;
+export var setTextEnding;
+export var pointDis = 0;
 
 //var Processing = require('./processing.js');
 var sketchProc = function(processing)
@@ -44,9 +47,9 @@ var sketchProc = function(processing)
   var enemyType= 0;
   var enemyH = 0;
   var enemyS = 0;
-  var pointDis = 0;
+  
   var standrd= 0;
-  var gameOver= 0;
+  
   var sl1y= 0;
   var sl2y= 0;
   var sl3y= 0;
@@ -66,6 +69,28 @@ var sketchProc = function(processing)
   var i= 0;
   var prevFrame = 0;
   
+  //Statistics Variables
+  var maxTimeText;
+  var maxAngleText;
+  var minAngleText;
+  var thresholdTimesText;
+
+  var maxTimeRect;
+  
+  var maxAngleRect;
+ 
+  var minAngleRect;
+  
+  var thresholdTimesRect;
+  
+  setTextEnding = function(mt, ma, mna, tt){
+    maxTimeText = mt;
+    maxAngleText = ma;
+    minAngleText = mna;
+    thresholdTimesText = tt;
+  };
+
+
   setThumbState = function(value)
   {
     thumbState = value;
@@ -91,7 +116,7 @@ var sketchProc = function(processing)
     eI = processing.loadImage("../pic/enemyShip.png");
     mouseC = processing.loadImage("../pic/redShot.png");
     standrd = processing.loadFont("../standrd.vlw");
-    gDisplay = processing.loadImage("../pic/endDisp.png");
+    //gDisplay = processing.loadImage("../pic/insert-coin.png");
     bg1 = processing.loadImage("../pic/starBackground.png");
     sL = processing.loadImage("../pic/speedLine.png");
     metI = processing.loadImage("../pic/meteorSmall.png");
@@ -120,13 +145,37 @@ var sketchProc = function(processing)
     processing.image(sL,sl3x,sl3y);
     printHealth();
     if (gameOver == 1) {
-      processing.image(gDisplay,240,180);
-      processing.textFont(standrd);
-      processing.textAlign(processing.CENTER);
-      processing.text(pointDis, 240, 320);
+      // processing.image(gDisplay,240,180);
+      // processing.textFont(standrd);
+      // processing.textAlign(processing.CENTER);
+      // processing.text(pointDis, 240, 320);
       var slS = pointDis*0.04 + 10;
+      var color = processing.color(255, 255, 255);
+      var fontSize = 25;
+      processing.fill(color);
+      processing.textSize(fontSize);
+      processing.background(0, 0, 0);
+      processing.text(maxTimeText, 25, 45);
+      processing.text(maxAngleText, 25, 70);
+      processing.text(minAngleText, 25, 95);
+      processing.text(thresholdTimesText, 25, 120);
+      processing.text('Gained Points: ' + slS, 25, 145);
+      processing.text('Try Again :)', 25, 170);
+      
     }
-    
+    else if( pointDis == 2000)
+    {
+      var color = processing.color(0, 255, 0);
+      var fontSize = 25;
+      processing.fill(color);
+      processing.textSize(fontSize);
+      processing.background(0, 0, 0);
+      processing.text(maxTimeText, 25, 45);
+      processing.text(maxAngleText, 25, 70);
+      processing.text(minAngleText, 25, 95);
+      processing.text(thresholdTimesText, 25, 120);
+      processing.text('Congratulations :)', 25, 170);
+    }
   }
 
   function drawProgressBar(){
