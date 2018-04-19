@@ -126,25 +126,36 @@ var sketchProc = function(processing)
 
   //done every tick (30 FPS)
   processing.draw = function() {
-    drawBg();
-    drawProgressBar();
-    processing.imageMode(processing.CENTER);
-    processing.image(redLaser,laserX,laserY-40);
-    laserY = laserY - 40;
-    printPlayerMine();
-    printEnemy();
-    printMeteor();
-    damageCheck();
-    printScore();
-    enemyS = 1;
-    genSL();
-    processing.imageMode(processing.CENTER);
-    processing.image(mouseC,posX,300);
-    processing.image(sL,sl1x,sl1y);
-    processing.image(sL,sl2x,sl2y);
-    processing.image(sL,sl3x,sl3y);
-    printHealth();
-    if (gameOver == 1 && pointDis < 2000) {
+    if(gameOver == 0 && pointDis < 2000)
+    {
+      drawBg();
+      drawProgressBar();
+      processing.imageMode(processing.CENTER);
+      processing.image(redLaser,laserX,laserY-40);
+      laserY = laserY - 40;
+      printPlayerMine();
+      printEnemy();
+      printMeteor();
+      damageCheck();
+      printScore();
+      enemyS = 1;
+      genSL();
+      processing.imageMode(processing.CENTER);
+      processing.image(mouseC,posX,300);
+      processing.image(sL,sl1x,sl1y);
+      processing.image(sL,sl2x,sl2y);
+      processing.image(sL,sl3x,sl3y);
+      printHealth();
+      if(textToBeDisplayed != 'NA')
+      {
+        var color = processing.color(0, 0, 0);
+        var fontSize = 25;
+        processing.fill(color);
+        processing.textSize(fontSize);
+        processing.text(textToBeDisplayed, 25, 170);
+      }
+    }
+    else if (gameOver == 1 && pointDis < 2000) {
       var slS = pointDis*0.04 + 10;
       var color = processing.color(255, 255, 255);
       var fontSize = 25;
@@ -156,10 +167,10 @@ var sketchProc = function(processing)
       processing.text(minAngleText, 25, 95);
       processing.text(thresholdTimesText, 25, 120);
       processing.text('Gained Points: ' + slS, 25, 145);
-      processing.text('Try Again :)', 25, 170);
+      processing.text('Try Again Press Up :)', 25, 170);
 
     }
-    else if( pointDis == 2000 && gameOver != 1)
+    else if( pointDis >= 2000 && gameOver != 1)
     {
       var color = processing.color(0, 255, 0);
       var fontSize = 25;
@@ -170,15 +181,7 @@ var sketchProc = function(processing)
       processing.text(maxAngleText, 25, 70);
       processing.text(minAngleText, 25, 95);
       processing.text(thresholdTimesText, 25, 120);
-      processing.text('Congratulations :)', 25, 170);
-    }
-    else if(textToBeDisplayed != 'NA')
-    {
-      var color = processing.color(0, 0, 0);
-      var fontSize = 25;
-      processing.fill(color);
-      processing.textSize(fontSize);
-      processing.text(textToBeDisplayed, 25, 170);
+      processing.text('Congratulations Press Up To play again :)', 10, 170);
     }
   }
 
@@ -294,7 +297,7 @@ var sketchProc = function(processing)
     if (posX < mX + 30 && posX > mX - 30 && 300 > mY - 30 && 300 < mY + 30) {
       pH = pH - 1;
       mY = 400;
-      if (pH == 0) {
+      if (pH == 0 && pointDis < 2000) {
         gameOver = 1;
       }
     }
@@ -317,6 +320,45 @@ var sketchProc = function(processing)
       processing.image(player,360,20);
     }
   }
+  processing.keyPressed = function()
+  {
+      if((processing.key==processing.CODED) && ((gameOver) || (pointDis >= 2000)))
+      {
+          if(processing.keyCode == processing.UP)
+          {
+            posX = 240;
+            laserY = 0;
+            laserX = 0;
+            enemyX = 0;
+            enemyY = 0;
+            enemyType= 0;
+            enemyH = 0;
+            enemyS = 3;
+            pH = 3;
+            gameOver = 0;
+            sl1y= 0;
+            sl2y= 0;
+            sl3y= 0;
+            sl4y= 0;
+            sl5y= 0;
+            sl6y= 0;
+            sl1x= 0;
+            sl2x= 0;
+            sl3x= 0;
+            sl4x= 0;
+            sl5x= 0;
+            sl6x= 0;
+            slS = 40;
+            mX= 0;
+            mY= 0;
+            i= 0;
+            pointDis = 0;
+            prevFrame = 0;
+            textToBeDisplayed = 'NA';
+          }
+      }
+  }
+   
 
 
   progressBarColor = function(handDetected)

@@ -66,7 +66,7 @@ function doStatistics(){
     var maxTime = Math.max(...times);
     maxTime = maxTime / 1000;
     setTextEnding('Max time is: ' + maxTime + ' sec',
-    'Max Angle is: ' + Math.floor(maxAngle), 'Min Angle is: '+ Math.floor(minAngle),
+    'Max Angle is: ' + Math.floor(maxAngle), 'Min Angle is: '+ minAngle,
     'Number of Times of thresholds are: ' + counter);
 }
 
@@ -92,8 +92,11 @@ var controller = Leap.loop(options, function(frame)
 
     var wristAngle = Math.acos(Leap.vec3.dot(armDirection, handDirection)) * (180 / Math.PI);
     var rotationAngle = hand.roll() * (180 / Math.PI);
-    
-    if(Math.floor(rotationAngle) > 20)
+    if(hand.stabilizedPalmPosition[1] < 270)
+    {
+        setCheatingText('Please, Raise your hand a bit more :)');
+    }
+    else if(Math.floor(rotationAngle) > 20)
     {
         if(textToBeDisplayed == 'NA')
         {
@@ -119,6 +122,10 @@ var controller = Leap.loop(options, function(frame)
         }
     }
     else {
+        if(textToBeDisplayed != 'NA')
+        {
+            prevtime = new Date();
+        }
         setCheatingText('NA');
     }
 
@@ -134,6 +141,7 @@ var controller = Leap.loop(options, function(frame)
   }
   else if(frame.hands.length == 0 && (! gameOver))
   {
+    prevtime = new Date();
     progressBarColor(false);
   }
 
