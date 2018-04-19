@@ -233,7 +233,7 @@ var sketchProc = function(processing)
 
   function printEnemy() {
     if (enemyH < 1) {
-      enemyX = processing.random(20, width);
+      enemyX = processing.random(50, width - 50);
       enemyY = -40;
       enemyH = 2;
     } else {

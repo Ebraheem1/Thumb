@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/leapController.js',
+  entry: './src/thumbClassifier.js',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
