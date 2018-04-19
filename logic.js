@@ -369,6 +369,7 @@ var sketchProc = function(processing)
     }
     else{
       progressBarRect = processing.color(255, 0, 0);
+      textToBeDisplayed = 'NA';
     }
   }
 }
