@@ -84,7 +84,7 @@ var controller = Leap.loop(options, function(frame)
     var palmPosition = hand.stabilizedPalmPosition[0];
     var pos = frame.pointables[1].stabilizedTipPosition;
     var normPos = frame.interactionBox.normalizePoint(pos, true);
-    var x = 480 * normPos[0];
+    var x = width * normPos[0];
     checkDistMine(palmPosition, x);
 
     var armDirection = hand.arm.direction();
@@ -111,11 +111,10 @@ var controller = Leap.loop(options, function(frame)
     } else if(wristAngle > 20) {
       var flag = directionUp(pos, hand.palmPosition);
       if(textToBeDisplayed == 'NA') {
-        
         if(flag) setCheatingText('Move your hand down');
         else setCheatingText('Move your hand up');
       }
-    }else if(hand.grabStrength > 0.1)
+    } else if(hand.grabStrength > 0.1)
     {
         if(textToBeDisplayed == 'NA'){
             setCheatingText('Please Stretch Your Fingers');
