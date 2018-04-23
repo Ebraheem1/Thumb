@@ -68,7 +68,7 @@ function directionUp(tipPosition, metacarpal) {
     if( frame && (frame.hands.length == 1) && (! gameOver) && (pointDis < 2000)) {
         var hand = frame.hands[0];
     
-        var palmPosition = hand.stabilizedPalmPosition[0];
+        var palmPosition = hand.stabilizedPalmPosition[1];
         var pos = frame.pointables[1].stabilizedTipPosition;
         var normPos = frame.interactionBox.normalizePoint(pos, true);
         var x = width * normPos[0];
@@ -78,6 +78,8 @@ function directionUp(tipPosition, metacarpal) {
         var handDirection = hand.direction;
     
         var wristAngle = Math.acos(Leap.vec3.dot(armDirection, handDirection)) * (180 / Math.PI);
+        
+        //Roll here represents the rotation around the z-axis
         var rotationAngle = hand.roll() * (180 / Math.PI);
         if(hand.stabilizedPalmPosition[1] < 270)
         {
@@ -96,7 +98,9 @@ function directionUp(tipPosition, metacarpal) {
                 setCheatingText('Rotate your Hand to the left to be flat.');
             }
         } else if(wristAngle > 20) {
-          var flag = directionUp(pos, hand.palmPosition);
+          var tip = hand.middleFinger.dipPosition;
+          var metacar = hand.middleFinger.mcpPosition;
+          var flag = directionUp(tip, metacar);
           if(textToBeDisplayed == 'NA') {
             if(flag) setCheatingText('Move your hand down');
             else setCheatingText('Move your hand up');

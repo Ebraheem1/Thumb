@@ -191,12 +191,8 @@ var sketchProc = function(processing)
 
   checkDistMine = function(palmPosition, position) {
     posX = position;
-    if((palmPosition >= -210) && (palmPosition <= 240))
-    {
-      progressBarColor(true);
-    } else {
-      progressBarColor(false);
-    }
+    progressBarColor(true);
+
   }
 
   function printPlayerMine(){
