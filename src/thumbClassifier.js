@@ -54,7 +54,7 @@ function checkThumb() {
 function doStatistics(){
     var maxTime = Math.max(...times);
     maxTime = maxTime / 1000;
-    setTextEnding('Max time is: ' + Number.parseFloat(maxTime).toPrecision(4) + ' sec',
+    setTextEnding('Max time is: ' + Number.parseFloat(maxTime).toPrecision(4) + ' sec(s)',
     'Max Angle is: ' + Number.parseFloat(maxAngle).toPrecision(4), 'Min Angle is: '+ Number.parseFloat(minAngle).toPrecision(4),
     'Number of Times of thresholds are: ' + counter);
 }
