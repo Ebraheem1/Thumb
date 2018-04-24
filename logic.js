@@ -105,18 +105,18 @@ var sketchProc = function(processing)
 
   //imports all images needed
   function importImgs() {
-    pReg = processing.loadImage("../pic/player.png");
-    pLeft = processing.loadImage("../pic/playerLeft.png");
-    pRight = processing.loadImage("../pic/playerRight.png");
+    pReg = processing.loadImage("../pic/ship.png");
+    pLeft = processing.loadImage("../pic/ship.png");
+    pRight = processing.loadImage("../pic/ship.png");
     redLaser = processing.loadImage("../pic/laserRed.png");
-    eI = processing.loadImage("../pic/enemyShip.png");
+    eI = processing.loadImage("../pic/enemynew.png");
     mouseC = processing.loadImage("../pic/redShot.png");
     standrd = processing.loadFont("../standrd.vlw");
     //gDisplay = processing.loadImage("../pic/insert-coin.png");
-    bg1 = processing.loadImage("../pic/starBackground.png");
+    bg1 = processing.loadImage("../pic/space2.jpeg");
     sL = processing.loadImage("../pic/speedLine.png");
-    metI = processing.loadImage("../pic/meteorSmall.png");
-    player =processing.loadImage("../pic/life.png");
+    metI = processing.loadImage("../pic/asteroidcrop.png");
+    player =processing.loadImage("../pic/shiplife.png");
     background = processing.loadImage("../pic/black-background.jpg");
   }
 
@@ -144,7 +144,7 @@ var sketchProc = function(processing)
       printHealth();
       if(textToBeDisplayed != 'NA')
       {
-        var color = processing.color(0, 0, 0);
+        var color = processing.color(255, 0, 0);
         var fontSize = 25;
         processing.fill(color);
         processing.textSize(fontSize);
@@ -243,9 +243,10 @@ var sketchProc = function(processing)
 
   function drawBg() {
     processing.imageMode(processing.CORNER);
-    for(var i = 0; i < width; i+=254)
-      for(var j = 0; j < height; j+=254)
+    for(var i = 0; i < width; i+=284)
+      for(var j = 0; j < height; j+=177)
         processing.image(bg1,i,j);
+    // processing.image(bg1, 0, 0);
   }
 
   function genSL() {
