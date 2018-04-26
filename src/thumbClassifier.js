@@ -76,7 +76,7 @@ function directionUp(tipPosition, metacarpal) {
         var pos = frame.pointables[1].stabilizedTipPosition;
         var normPos = frame.interactionBox.normalizePoint(pos, true);
         var x = width * normPos[0];
-        checkDistMine(palmPosition, x);
+        checkDistMine(x);
 
         var armDirection = hand.arm.direction();
         var handDirection = hand.direction;
@@ -98,20 +98,16 @@ function directionUp(tipPosition, metacarpal) {
           if(textToBeDisplayed == 'NA')
           {
             setCheatingText('Rotate your hand to the right to be flat.');
-            if(!alreadyCheating) {
-              startcheat = new Date();
-              alreadyCheating = true;
-            }
+            startcheat = new Date();
+            alreadyCheating = true;
           }
         } else if(Math.floor(rotationAngle) < -20)
         {
           if(textToBeDisplayed == 'NA')
           {
             setCheatingText('Rotate your Hand to the left to be flat.');
-            if(!alreadyCheating) {
-              startcheat = new Date();
-              alreadyCheating = true;
-            }
+            startcheat = new Date();
+            alreadyCheating = true;
           }
         } else if(wristAngle > 20) {
           var tip = hand.middleFinger.dipPosition;
@@ -120,25 +116,20 @@ function directionUp(tipPosition, metacarpal) {
           if(textToBeDisplayed == 'NA') {
             if(flag) setCheatingText('Move your hand down');
             else setCheatingText('Move your hand up');
-            if(!alreadyCheating) {
-              startcheat = new Date();
-              alreadyCheating = true;
-            }
+
+            startcheat = new Date();
+            alreadyCheating = true;
           }
         } else if(hand.grabStrength > 0.1)
         {
           if(textToBeDisplayed == 'NA'){
             setCheatingText('Please Stretch Your Fingers');
-            if(!alreadyCheating) {
-              startcheat = new Date();
-              alreadyCheating = true;
-            }
+            startcheat = new Date();
+            alreadyCheating = true;
           }
         }
         else {
-            if(textToBeDisplayed != 'NA')
-            {
-              // prevtime = new Date();
+            if(alreadyCheating) {
               alreadyCheating = false;
               var now = new Date();
               cheatedTime += now - startcheat;
@@ -146,22 +137,27 @@ function directionUp(tipPosition, metacarpal) {
             setCheatingText('NA');
         }
 
-        measuringAngleBetweenFingers(hand);
-        if(checkThumb()) {
-          var now = new Date();
-          timetaken = now - prevtime - cheatedTime;
-          console.log("cheating time: ", cheatedTime);
-          cheatedTime = 0;
-          prevtime = now;
-          times.push(timetaken);
-          console.log(Number.parseFloat(timetaken).toPrecision(4));
-          if(textToBeDisplayed == 'NA')
+        if(!alreadyCheating){
+          measuringAngleBetweenFingers(hand);
+
+          if(checkThumb()){
+            var now = new Date();
+            timetaken = now - prevtime - cheatedTime;
+            console.log("cheating time: ", cheatedTime);
+            cheatedTime = 0;
+            prevtime = now;
+            if(timetaken > 0) times.push(timetaken);
+            console.log(Number.parseFloat(timetaken).toPrecision(4));
             playLaser();
+          }
         }
     }
     else if(frame && frame.hands.length == 0 && (! gameOver))
     {
-      prevtime = new Date();
+      if(!alreadyCheating) {
+        startcheat = new Date();
+        alreadyCheating = true;
+      }
       progressBarColor(false);
     }
     if((gameOver) || (pointDis == 2000))

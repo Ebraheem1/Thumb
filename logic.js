@@ -189,10 +189,9 @@ var sketchProc = function(processing)
   }
 
 
-  checkDistMine = function(palmPosition, position) {
+  checkDistMine = function(position) {
     posX = position;
     progressBarColor(true);
-
   }
 
   function printPlayerMine(){
