@@ -274,7 +274,6 @@ var sketchProc = function(processing)
     if (mY > height) {
       mY = processing.random(-100,-40);
       mX = processing.random(50, width - 20);
-      console.log(mX);
     } else {
       mY = mY + 2;
     }

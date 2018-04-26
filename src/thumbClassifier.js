@@ -15,6 +15,10 @@ var prevtime = 0;
 var timetaken = 0;
 var firstFrame = true;
 
+var cheatedTime = 0;
+var startcheat = 0;
+var alreadyCheating = false;
+
 var measuringAngleBetweenFingers = function(hand)
 {
     var thumbDirection = hand.thumb.medial.direction();
@@ -67,36 +71,48 @@ function directionUp(tipPosition, metacarpal) {
 (function thumbClassifierController(){
     if( frame && (frame.hands.length == 1) && (! gameOver) && (pointDis < 2000)) {
         var hand = frame.hands[0];
-    
+
         var palmPosition = hand.stabilizedPalmPosition[1];
         var pos = frame.pointables[1].stabilizedTipPosition;
         var normPos = frame.interactionBox.normalizePoint(pos, true);
         var x = width * normPos[0];
         checkDistMine(palmPosition, x);
-    
+
         var armDirection = hand.arm.direction();
         var handDirection = hand.direction;
-    
+
         var wristAngle = Math.acos(Leap.vec3.dot(armDirection, handDirection)) * (180 / Math.PI);
-        
+
         //Roll here represents the rotation around the z-axis
         var rotationAngle = hand.roll() * (180 / Math.PI);
         if(hand.stabilizedPalmPosition[1] < 270)
         {
-            setCheatingText('Please, Raise your hand a bit more :)');
+          setCheatingText('Please, Raise your hand a bit more :)');
+          if(!alreadyCheating) {
+            startcheat = new Date();
+            alreadyCheating = true;
+          }
         }
         else if(Math.floor(rotationAngle) > 20)
         {
-            if(textToBeDisplayed == 'NA')
-            {
-                setCheatingText('Rotate your hand to the right to be flat.');
+          if(textToBeDisplayed == 'NA')
+          {
+            setCheatingText('Rotate your hand to the right to be flat.');
+            if(!alreadyCheating) {
+              startcheat = new Date();
+              alreadyCheating = true;
             }
+          }
         } else if(Math.floor(rotationAngle) < -20)
         {
-            if(textToBeDisplayed == 'NA')
-            {
-                setCheatingText('Rotate your Hand to the left to be flat.');
+          if(textToBeDisplayed == 'NA')
+          {
+            setCheatingText('Rotate your Hand to the left to be flat.');
+            if(!alreadyCheating) {
+              startcheat = new Date();
+              alreadyCheating = true;
             }
+          }
         } else if(wristAngle > 20) {
           var tip = hand.middleFinger.dipPosition;
           var metacar = hand.middleFinger.mcpPosition;
@@ -104,39 +120,96 @@ function directionUp(tipPosition, metacarpal) {
           if(textToBeDisplayed == 'NA') {
             if(flag) setCheatingText('Move your hand down');
             else setCheatingText('Move your hand up');
+            if(!alreadyCheating) {
+              startcheat = new Date();
+              alreadyCheating = true;
+            }
           }
         } else if(hand.grabStrength > 0.1)
         {
-            if(textToBeDisplayed == 'NA'){
-                setCheatingText('Please Stretch Your Fingers');
+          if(textToBeDisplayed == 'NA'){
+            setCheatingText('Please Stretch Your Fingers');
+            if(!alreadyCheating) {
+              startcheat = new Date();
+              alreadyCheating = true;
             }
+          }
         }
         else {
             if(textToBeDisplayed != 'NA')
             {
-                prevtime = new Date();
+              // prevtime = new Date();
+              alreadyCheating = false;
+              var now = new Date();
+              cheatedTime += now - startcheat;
             }
             setCheatingText('NA');
         }
-    
+
         measuringAngleBetweenFingers(hand);
         if(checkThumb()) {
           var now = new Date();
-          timetaken = now - prevtime;
+          timetaken = now - prevtime - cheatedTime;
+          console.log("cheating time: ", cheatedTime);
+          cheatedTime = 0;
           prevtime = now;
           times.push(timetaken);
+          console.log(Number.parseFloat(timetaken).toPrecision(4));
           if(textToBeDisplayed == 'NA')
             playLaser();
         }
     }
     else if(frame && frame.hands.length == 0 && (! gameOver))
     {
-    prevtime = new Date();
-    progressBarColor(false);
+      prevtime = new Date();
+      progressBarColor(false);
     }
     if((gameOver) || (pointDis == 2000))
     {
-    doStatistics();
+      doStatistics();
     }
     setTimeout(thumbClassifierController, 1);
 })();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
