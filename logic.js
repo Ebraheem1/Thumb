@@ -71,11 +71,28 @@ var sketchProc = function(processing)
   var minAngleText;
   var thresholdTimesText;
 
+  var movedown = [];
+  var movedownframe = 0;
+  var movedownlastframe = 0;
+
+  var moveup = [];
+  var moveupframe = 0;
+  var moveuplastframe = 0;
+
+  var rotateanticlockwise = [];
+  var rotateanticlockwiseframe = 0;
+  var rotateanticlockwiselastframe = 0;
+
+  var rotateclockwise = [];
+  var rotateclockwiseframe = 0;
+  var rotateclockwiselastframe = 0;
+
   //Cheating Variables
   textToBeDisplayed = 'NA';
 
   setCheatingText = function(text)
   {
+
     textToBeDisplayed = text;
   }
 
@@ -98,6 +115,7 @@ var sketchProc = function(processing)
     //most games run at 30 FPS
     processing.frameRate(30);
     importImgs();
+    // console.log(movedown);
     gameOver = 0;
     enemyS = 3;
     pH = 3;
@@ -118,6 +136,26 @@ var sketchProc = function(processing)
     metI = processing.loadImage("../pic/asteroidcrop.png");
     player =processing.loadImage("../pic/shiplife.png");
     background = processing.loadImage("../pic/black-background.jpg");
+
+    for(var i = 0; i < 27; i++) {
+      var tmp = processing.loadImage("../pic/movedown/frame_" + processing.nf(i, 2) + "_delay-0.1s.gif");
+      movedown.push(tmp);
+    }
+
+    for(var i = 0; i < 28; i++) {
+      var tmp = processing.loadImage("../pic/moveup/frame_" + processing.nf(i, 2) + "_delay-0.1s.gif");
+      moveup.push(tmp);
+    }
+
+    for(var i = 0; i < 23; i++) {
+      var tmp = processing.loadImage("../pic/rotateanticlockwise/frame_" + processing.nf(i, 2) + "_delay-0.1s.gif");
+      rotateanticlockwise.push(tmp);
+    }
+
+    for(var i = 0; i < 26; i++) {
+      var tmp = processing.loadImage("../pic/rotateclockwise/frame_" + processing.nf(i, 2) + "_delay-0.1s.gif");
+      rotateclockwise.push(tmp);
+    }
   }
 
   //done every tick (30 FPS)
@@ -149,6 +187,8 @@ var sketchProc = function(processing)
         processing.fill(color);
         processing.textSize(fontSize);
         processing.text(textToBeDisplayed, width/4, height/2);
+
+        drawAnim();
       }
     }
     else if (gameOver == 1 && pointDis < 2000) {
@@ -186,6 +226,62 @@ var sketchProc = function(processing)
     processing.fill(progressBarRect);
     //.rect(x-coordinate, y-coordinate, width, height)
     processing.rect(width - 80, 45, 80, 10);
+  }
+
+  function drawAnim() {
+    if(textToBeDisplayed == 'Move your hand down') {
+      movedownframe = (movedownframe + 1) % movedown.length;
+
+      processing.imageMode(processing.CENTER);
+      var img = movedown[movedownframe];
+      processing.image(img, width/2, height/2 - img.height/2);
+
+      if(movedownframe == 26 && movedownlastframe < 20) {
+        movedownframe = 25;
+        movedownlastframe++;
+      } else {
+        movedownlastframe = 0;
+      }
+    } else if(textToBeDisplayed == 'Move your hand up') {
+      moveupframe = (moveupframe + 1) % moveup.length;
+
+      processing.imageMode(processing.CENTER);
+      var img = moveup[moveupframe];
+      processing.image(img, width/2, height/2 - img.height/2);
+
+      if(moveupframe == 27 && moveuplastframe < 20) {
+        moveupframe = 26;
+        moveuplastframe++;
+      } else {
+        moveuplastframe = 0;
+      }
+    } else if(textToBeDisplayed == 'Rotate your hand to the left to be flat.') {
+      rotateanticlockwiseframe = (rotateanticlockwiseframe + 1) % rotateanticlockwise.length;
+
+      processing.imageMode(processing.CENTER);
+      var img = rotateanticlockwise[rotateanticlockwiseframe];
+      processing.image(img, width/2, height/2 - img.height/2);
+
+      if(rotateanticlockwiseframe == 22 && rotateanticlockwiselastframe < 20) {
+        rotateanticlockwiseframe = 21;
+        rotateanticlockwiselastframe++;
+      } else {
+        rotateanticlockwiselastframe = 0;
+      }
+    } else if(textToBeDisplayed == 'Rotate your hand to the right to be flat.') {
+      rotateclockwiseframe = (rotateclockwiseframe + 1) % rotateclockwise.length;
+
+      processing.imageMode(processing.CENTER);
+      var img = rotateclockwise[rotateclockwiseframe];
+      processing.image(img, width/2, height/2 - img.height/2);
+
+      if(rotateclockwiseframe == 25 && rotateclockwiselastframe < 20) {
+        rotateclockwiseframe = 24;
+        rotateclockwiselastframe++;
+      } else {
+        rotateclockwiselastframe = 0;
+      }
+    }
   }
 
 
@@ -344,8 +440,6 @@ var sketchProc = function(processing)
           }
       }
   }
-
-
 
   progressBarColor = function(handDetected)
   {
