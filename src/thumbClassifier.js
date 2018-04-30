@@ -3,9 +3,6 @@ import { thumbState, width, height, checkDistMine, playLaser, progressBarColor,
     textToBeDisplayed, setCheatingText} from '../logic';
 import {currentFrame as frame, Leap } from './leapController';
 
-// var fs = require('fs');
-
-
 var thumbIndexAngle = 0;
 var times = [];
 var maxAngle = -10;
@@ -20,8 +17,6 @@ var firstFrame = true;
 var cheatedTime = 0;
 var startcheat = 0;
 var alreadyCheating = false;
-
-var x = true;
 
 var measuringAngleBetweenFingers = function(hand)
 {
@@ -156,25 +151,6 @@ function directionUp(tipPosition, metacarpal) {
           }
         }
         var pointable = frame.pointables[0];
-        // console.log(pointable.toString());
-
-      // if(x) {
-      //   x = false;
-      //   // var s = frame.Serialize();
-      //   // console.log(frame.data);
-      //   // var obj = JSON.parse(frame);
-      //   var myJSON = JSON.stringify(frame.data);
-      //   console.log(myJSON);
-      //   console.log("..........");
-      //
-      //   fs.writeFile("/tmp/test", "Hey there!", function(err) {
-      //       if(err) {
-      //           return console.log(err);
-      //       }
-      //
-      //       console.log("The file was saved!");
-      //   });
-      // }
     }
     else if(frame && frame.hands.length == 0 && (! gameOver))
     {
@@ -190,16 +166,6 @@ function directionUp(tipPosition, metacarpal) {
     }
     setTimeout(thumbClassifierController, 1);
 })();
-
-
-
-// Returns a JSON-formatted string containing the hands, pointables and gestures
-// in this frame.
-//
-// function jsonFormattedString() {
-//
-// }
-
 
 
 

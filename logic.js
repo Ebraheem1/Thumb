@@ -115,7 +115,7 @@ var sketchProc = function(processing)
     //most games run at 30 FPS
     processing.frameRate(30);
     importImgs();
-    // console.log(movedown);
+
     gameOver = 0;
     enemyS = 3;
     pH = 3;
