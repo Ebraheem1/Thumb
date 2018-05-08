@@ -3,7 +3,8 @@ import { thumbState, width, height, checkDistMine, playLaser, progressBarColor,
     textToBeDisplayed, setCheatingText} from '../logic';
 import {currentFrame as frame, Leap } from './leapController';
 
-var C3 = require('c3');
+// var c3 = require('c3');
+import * as C3 from 'c3';
 var smooth = require ('../smooth.js');
 var thumbIndexAngle = 0;
 var times = [];
@@ -56,12 +57,13 @@ var measuringAnglesForFiltering = function(hand)
   thumbIndexAngle = Math.acos(Leap.vec3.dot(thumbDirection, indexDirection)) * (180 / Math.PI);
 }
 
-function doFiltering(){
+function doFiltering() {
   frames.forEach(frame => {
     measuringAnglesForFiltering(frame.hands[0]);
     thumbIndexAngleArrCon.push(thumbIndexAngle);
-
+    // console.log(thumbIndexAngleArrCon);
     if(frame.hands[0].confidence > 0.7) {
+      // console.log("eh?");
       thumbIndexAngleArrDis.push(thumbIndexAngle);
       distalMedialArr.push(distal_medial);
       medialProximalArr.push(medial_proximal);
@@ -76,6 +78,50 @@ function doFiltering(){
     thumbIndexFunc = smooth.Smooth(thumbIndexAngleArrCon);
   }
 };
+
+function drawthumbIndexAngleHistogram() {
+  var thumbIndexAngleCount = Array(37).fill(0);
+  thumbIndexAngleCount[0] = 'Count';
+
+  for(var i = 0; i < thumbIndexAngleArrDis.length; i++) {
+  	thumbIndexAngleCount[Math.ceil(thumbIndexAngleArrDis[i]/5)]++;
+  }
+
+  var xAxis = [];
+  xAxis.push['Angles'];
+
+  for(var i = 1; i < 180; i+=5) {
+  	xAxis.push(i + ' to ' +(i+4));
+  }
+
+  for(var i = 1; i < 37; i++) {
+  	if(thumbIndexAngleCount[i] == 0) {
+  		thumbIndexAngleCount.splice(i, 1);
+  		xAxis.splice(i, 1);
+  		i--;
+  	}
+  }
+
+  // console.log(thumbIndexAngleArrDis);
+  // console.log(thumbIndexAngleCount);
+  // console.log(xAxis);
+
+
+  var chart = C3.generate({
+      data: {
+          columns: [
+              thumbIndexAngleCount
+          ],
+      type: 'bar'
+      },
+      axis: {
+          x: {
+              type: 'category',
+              categories: xAxis
+          }
+      }
+  });
+}
 
 function checkThumb() {
     if(firstFrame)
@@ -176,6 +222,10 @@ function directionUp(tipPosition, metacarpal) {
               cheatedTime += now - startcheat;
             }
             setCheatingText('NA');
+            if(frames.length < 30000)
+            {
+              frames.push(frame);
+            }
         }
 
         if(!alreadyCheating){
@@ -187,10 +237,6 @@ function directionUp(tipPosition, metacarpal) {
             cheatedTime = 0;
             prevtime = now;
             if(timetaken > 0) times.push(timetaken);
-            if(frames.length < 30000)
-            {
-              frames.push(frame);
-            }
             playLaser();
           }
         }
@@ -208,11 +254,12 @@ function directionUp(tipPosition, metacarpal) {
     {
       if(statflag)
       {
-        doStatistics();
+        // doStatistics();
         doFiltering();
-        drawCharts();
+        drawthumbIndexAngleHistogram();
+        // drawCharts();
         statflag = false;
-      } 
+      }
     }
     setTimeout(thumbClassifierController, 1);
 })();
