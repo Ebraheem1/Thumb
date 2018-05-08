@@ -3,7 +3,8 @@ import { thumbState, width, height, checkDistMine, playLaser, progressBarColor,
     textToBeDisplayed, setCheatingText} from '../logic';
 import {currentFrame as frame, Leap } from './leapController';
 
-var C3 = require('c3');
+// var c3 = require('c3');
+import * as C3 from 'c3';
 var smooth = require ('../smooth.js');
 var thumbIndexAngle = 0;
 var times = [];
@@ -56,12 +57,13 @@ var measuringAnglesForFiltering = function(hand)
   thumbIndexAngle = Math.acos(Leap.vec3.dot(thumbDirection, indexDirection)) * (180 / Math.PI);
 }
 
-function doFiltering(){
+function doFiltering() {
   frames.forEach(frame => {
     measuringAnglesForFiltering(frame.hands[0]);
     thumbIndexAngleArrCon.push(thumbIndexAngle);
-
+    
     if(frame.hands[0].confidence > 0.7) {
+      
       thumbIndexAngleArrDis.push(thumbIndexAngle);
       distalMedialArr.push(distal_medial);
       medialProximalArr.push(medial_proximal);
@@ -75,8 +77,45 @@ function doFiltering(){
     //Y-axis would be the count of this interval
     thumbIndexFunc = smooth.Smooth(thumbIndexAngleArrCon);
   }
-  console.log(thumbIndexAngleArrCon);
 };
+
+function drawthumbIndexAngleHistogram() {
+  var thumbIndexAngleCount = Array(37).fill(0);
+  thumbIndexAngleCount[0] = 'Count';
+
+  for(var i = 0; i < thumbIndexAngleArrDis.length; i++) {
+  	thumbIndexAngleCount[Math.ceil(thumbIndexAngleArrDis[i]/5)]++;
+  }
+
+  var xAxis = [];
+  xAxis.push['Angles'];
+
+  for(var i = 1; i < 180; i+=5) {
+  	xAxis.push(i + ' to ' +(i+4));
+  }
+
+  for(var i = 1; i < 37; i++) {
+  	if(thumbIndexAngleCount[i] == 0) {
+  		thumbIndexAngleCount.splice(i, 1);
+  		xAxis.splice(i, 1);
+  		i--;
+  	}
+  }
+  var chart = C3.generate({
+      data: {
+          columns: [
+              thumbIndexAngleCount
+          ],
+      type: 'bar'
+      },
+      axis: {
+          x: {
+              type: 'category',
+              categories: xAxis
+          }
+      }
+  });
+}
 
 function checkThumb() {
     if(firstFrame)
@@ -209,17 +248,20 @@ function directionUp(tipPosition, metacarpal) {
     {
       if(statflag)
       {
-        //doStatistics();
         doFiltering();
+        //drawthumbIndexAngleHistogram();
         drawCharts();
         statflag = false;
-      } 
+      }
     }
     setTimeout(thumbClassifierController, 1);
 })();
 
 function drawCharts(){
   var scatterPlot = document.getElementById("scatter-plot");
+  scatterPlot.setAttribute("style", "background-color: lightblue;");
+  scatterPlot.setAttribute("style", "height: 200px;");
+  scatterPlot.setAttribute("style", "width: 400px;");
   var scatterX = [];
   var scatterY = [];
   for(var i = 0; i < thumbIndexAngleArrCon.length; i++)
@@ -228,6 +270,7 @@ function drawCharts(){
   scatterY = thumbIndexAngleArrCon;
   scatterY.unshift("angles");
   var scatterChart = C3.generate({
+    bindto: scatterPlot,
     data: {
         xs: {
             angles: 'frames'
@@ -238,8 +281,7 @@ function drawCharts(){
         ],
         type: 'scatter',
         colors: {
-          frames: '#ff0000',
-          angles: '#00ff00',
+          angles: '#00ff00'
       }
     },
     axis: {
