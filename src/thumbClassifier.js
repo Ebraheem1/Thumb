@@ -75,6 +75,7 @@ function doFiltering(){
     //Y-axis would be the count of this interval
     thumbIndexFunc = smooth.Smooth(thumbIndexAngleArrCon);
   }
+  console.log(thumbIndexAngleArrCon);
 };
 
 function checkThumb() {
@@ -176,6 +177,10 @@ function directionUp(tipPosition, metacarpal) {
               cheatedTime += now - startcheat;
             }
             setCheatingText('NA');
+            if(frames.length < 30000)
+            {
+              frames.push(frame);
+            }
         }
 
         if(!alreadyCheating){
@@ -187,10 +192,6 @@ function directionUp(tipPosition, metacarpal) {
             cheatedTime = 0;
             prevtime = now;
             if(timetaken > 0) times.push(timetaken);
-            if(frames.length < 30000)
-            {
-              frames.push(frame);
-            }
             playLaser();
           }
         }
@@ -208,7 +209,7 @@ function directionUp(tipPosition, metacarpal) {
     {
       if(statflag)
       {
-        doStatistics();
+        //doStatistics();
         doFiltering();
         drawCharts();
         statflag = false;
@@ -218,14 +219,39 @@ function directionUp(tipPosition, metacarpal) {
 })();
 
 function drawCharts(){
-  var trialChart = document.getElementById("chart");
-  var chart = C3.generate({
-    bindto: trialChart,
+  var scatterPlot = document.getElementById("scatter-plot");
+  var scatterX = [];
+  var scatterY = [];
+  for(var i = 0; i < thumbIndexAngleArrCon.length; i++)
+    scatterX.push(i+1);
+  scatterX.unshift("frames");
+  scatterY = thumbIndexAngleArrCon;
+  scatterY.unshift("angles");
+  var scatterChart = C3.generate({
     data: {
-      columns: [
-        ['data1', 30, 200, 100, 400, 150, 250],
-        ['data2', 50, 20, 10, 40, 15, 25]
-      ]
+        xs: {
+            angles: 'frames'
+        },
+        columns: [
+            scatterX,
+            scatterY
+        ],
+        type: 'scatter',
+        colors: {
+          frames: '#ff0000',
+          angles: '#00ff00',
+      }
+    },
+    axis: {
+        x: {
+            label: 'Valid Frames with order',
+            tick: {
+                fit: false
+            }
+        },
+        y: {
+            label: 'Corresponding Angle'
+        }
     }
   });
 };

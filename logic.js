@@ -197,13 +197,13 @@ var sketchProc = function(processing)
       var fontSize = 25;
       processing.fill(color);
       processing.textSize(fontSize);
-      processing.background(0, 0, 0);
-      processing.text(maxTimeText, 25, 45);
-      processing.text(maxAngleText, 25, 70);
-      processing.text(minAngleText, 25, 95);
-      processing.text(thresholdTimesText, 25, 120);
-      processing.text('Gained Points: ' + slS, 25, 145);
-      processing.text('Try Again Press Up :)', 25, 170);
+      processing.background(255, 255, 255);
+      // processing.text(maxTimeText, 25, 45);
+      // processing.text(maxAngleText, 25, 70);
+      // processing.text(minAngleText, 25, 95);
+      // processing.text(thresholdTimesText, 25, 120);
+      // processing.text('Gained Points: ' + slS, 25, 145);
+      // processing.text('Try Again Press Up :)', 25, 170);
 
     }
     else if( pointDis >= 2000 && gameOver != 1)
