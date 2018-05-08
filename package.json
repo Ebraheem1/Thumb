@@ -14,8 +14,9 @@
     "webpack-cli": "^2.0.14"
   },
   "dependencies": {
-    "fs": "0.0.1-security",
-    "json-2-csv": "^2.2.0",
+    "c3": "^0.5.4",
+    "d3": "^3.5.17",
+    "ify-loader": "^1.1.0",
     "leapjs": "^0.6.4"
   }
 }

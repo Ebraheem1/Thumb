@@ -1,5 +1,3 @@
-
-
 export var Leap = require('leapjs');
 export var currentFrame;
 

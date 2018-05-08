@@ -3,20 +3,30 @@ import { thumbState, width, height, checkDistMine, playLaser, progressBarColor,
     textToBeDisplayed, setCheatingText} from '../logic';
 import {currentFrame as frame, Leap } from './leapController';
 
+var C3 = require('c3');
+var smooth = require ('../smooth.js');
 var thumbIndexAngle = 0;
 var times = [];
 var maxAngle = -10;
 var minAngle = 200;
 var counter = 0;
-
+var frames = [];
+var thumbIndexAngleArrDis = [];
+var thumbIndexAngleArrCon = [];
+var distalMedialArr = [];
+var medialProximalArr = [];
+var thumbIndexFunc;
+var distal_medial;
+var medial_proximal;
 //Variables for speed detection
 var prevtime = 0;
 var timetaken = 0;
 var firstFrame = true;
-
+var statflag = true;
 var cheatedTime = 0;
 var startcheat = 0;
 var alreadyCheating = false;
+
 
 var measuringAngleBetweenFingers = function(hand)
 {
@@ -32,6 +42,39 @@ var measuringAngleBetweenFingers = function(hand)
     {
         minAngle = thumbIndexAngle;
     }
+};
+
+var measuringAnglesForFiltering = function(hand)
+{
+  var thumbDirection = hand.thumb.medial.direction();
+  var indexDirection = hand.indexFinger.proximal.direction();
+  var thumbDistal = hand.thumb.distal.direction();
+  var thumbMedial = hand.thumb.medial.direction();
+  var thumbProximal = hand.thumb.proximal.direction();
+  distal_medial = Math.acos(Leap.vec3.dot(thumbDistal, thumbMedial)) * (180 / Math.PI);
+  medial_proximal = Math.acos(Leap.vec3.dot(thumbMedial, thumbProximal)) * (180 / Math.PI);
+  thumbIndexAngle = Math.acos(Leap.vec3.dot(thumbDirection, indexDirection)) * (180 / Math.PI);
+}
+
+function doFiltering(){
+  frames.forEach(frame => {
+    measuringAnglesForFiltering(frame.hands[0]);
+    thumbIndexAngleArrCon.push(thumbIndexAngle);
+
+    if(frame.hands[0].confidence > 0.7) {
+      thumbIndexAngleArrDis.push(thumbIndexAngle);
+      distalMedialArr.push(distal_medial);
+      medialProximalArr.push(medial_proximal);
+    }
+  });
+  if(thumbIndexAngleArrCon.length > 2)
+  {
+    //This line creates a function upon its value, we pass its x-value
+    //then it outputs the corresponding y-value.
+    //In that case: X-axis would be the interval of angles
+    //Y-axis would be the count of this interval
+    thumbIndexFunc = smooth.Smooth(thumbIndexAngleArrCon);
+  }
 };
 
 function checkThumb() {
@@ -70,7 +113,6 @@ function directionUp(tipPosition, metacarpal) {
 (function thumbClassifierController(){
     if( frame && (frame.hands.length == 1) && (! gameOver) && (pointDis < 2000)) {
         var hand = frame.hands[0];
-
         var palmPosition = hand.stabilizedPalmPosition[1];
         var pos = frame.pointables[1].stabilizedTipPosition;
         var normPos = frame.interactionBox.normalizePoint(pos, true);
@@ -142,11 +184,13 @@ function directionUp(tipPosition, metacarpal) {
           if(checkThumb()){
             var now = new Date();
             timetaken = now - prevtime - cheatedTime;
-            console.log("cheating time: ", cheatedTime);
             cheatedTime = 0;
             prevtime = now;
             if(timetaken > 0) times.push(timetaken);
-            console.log(Number.parseFloat(timetaken).toPrecision(4));
+            if(frames.length < 30000)
+            {
+              frames.push(frame);
+            }
             playLaser();
           }
         }
@@ -162,10 +206,31 @@ function directionUp(tipPosition, metacarpal) {
     }
     if((gameOver) || (pointDis == 2000))
     {
-      doStatistics();
+      if(statflag)
+      {
+        doStatistics();
+        doFiltering();
+        drawCharts();
+        statflag = false;
+      } 
     }
     setTimeout(thumbClassifierController, 1);
 })();
+
+function drawCharts(){
+  var trialChart = document.getElementById("chart");
+  var chart = C3.generate({
+    bindto: trialChart,
+    data: {
+      columns: [
+        ['data1', 30, 200, 100, 400, 150, 250],
+        ['data2', 50, 20, 10, 40, 15, 25]
+      ]
+    }
+  });
+};
+
+
 
 
 
