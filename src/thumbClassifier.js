@@ -61,9 +61,9 @@ function doFiltering() {
   frames.forEach(frame => {
     measuringAnglesForFiltering(frame.hands[0]);
     thumbIndexAngleArrCon.push(thumbIndexAngle);
-    
+
     if(frame.hands[0].confidence > 0.7) {
-      
+
       thumbIndexAngleArrDis.push(thumbIndexAngle);
       distalMedialArr.push(distal_medial);
       medialProximalArr.push(medial_proximal);
@@ -79,21 +79,34 @@ function doFiltering() {
   }
 };
 
+// The x-axis represents the angles from 0 to 180, and each point is tha angle [n, n+4] where n is divisible by 5.
+// The y-axis represents how many times the patient reached such angle.
 function drawthumbIndexAngleHistogram() {
+  // thumbIndexAngleCount --> y-axis.
+  // the first cell in array contains the name that represents the y-axis.
+  // length of array is 37: (180/5)'the number of points' + 1 'the name of array'
   var thumbIndexAngleCount = Array(37).fill(0);
   thumbIndexAngleCount[0] = 'Count';
 
+  // loops through the thumbIndexAngleArrDis, which is the array that contains the thumb-index angles, it rounds the angle to the
+  // nearest integer.
+  // division by 5 to know which cell in array this angle is included to.(since each cell in thumbIndexAngleCount array is angle interval
+  // from [n, n+4])
   for(var i = 0; i < thumbIndexAngleArrDis.length; i++) {
   	thumbIndexAngleCount[Math.ceil(thumbIndexAngleArrDis[i]/5)]++;
   }
 
+  // xAxis array is the angles.
+  // the first cell contains the name that represents the x-axis.
   var xAxis = [];
   xAxis.push['Angles'];
 
+  // each point in x-axis is the [angle, angle+4] where angle is divisible by 5
   for(var i = 1; i < 180; i+=5) {
   	xAxis.push(i + ' to ' +(i+4));
   }
 
+  // removes the angles that was never reached by the patient
   for(var i = 1; i < 37; i++) {
   	if(thumbIndexAngleCount[i] == 0) {
   		thumbIndexAngleCount.splice(i, 1);
@@ -101,6 +114,8 @@ function drawthumbIndexAngleHistogram() {
   		i--;
   	}
   }
+
+  // draws the graph
   var chart = C3.generate({
       data: {
           columns: [
