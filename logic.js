@@ -192,12 +192,12 @@ var sketchProc = function(processing)
       }
     }
     else if (gameOver == 1 && pointDis < 2000) {
-      var slS = pointDis*0.04 + 10;
-      var color = processing.color(255, 255, 255);
-      var fontSize = 25;
-      processing.fill(color);
-      processing.textSize(fontSize);
-      processing.background(0, 0, 0);
+      // var slS = pointDis*0.04 + 10;
+      // var color = processing.color(255, 255, 255);
+      // var fontSize = 25;
+      // processing.fill(color);
+      // processing.textSize(fontSize);
+      // processing.background(0, 0, 0);
       // processing.text(maxTimeText, 25, 45);
       // processing.text(maxAngleText, 25, 70);
       // processing.text(minAngleText, 25, 95);

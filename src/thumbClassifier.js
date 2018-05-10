@@ -258,10 +258,14 @@ function directionUp(tipPosition, metacarpal) {
 })();
 
 function drawCharts(){
+  var canvas = document.getElementById("canvas1");
+  canvas.style.display = "none";
   var scatterPlot = document.getElementById("scatter-plot");
-  scatterPlot.setAttribute("style", "background-color: lightblue;");
-  scatterPlot.setAttribute("style", "height: 200px;");
-  scatterPlot.setAttribute("style", "width: 400px;");
+  scatterPlot.style.backgroundColor = "lightblue";
+  scatterPlot.style.height = "200px";
+  scatterPlot.style.width = "400px";
+  // scatterPlot.setAttribute("style", "height: 200px;");
+  // scatterPlot.setAttribute("style", "width: 400px;");
   var scatterX = [];
   var scatterY = [];
   for(var i = 0; i < thumbIndexAngleArrCon.length; i++)
