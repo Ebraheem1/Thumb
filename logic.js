@@ -117,6 +117,9 @@ var sketchProc = function(processing)
     importImgs();
     var loader = document.getElementById("load");
     loader.style.display = "none";
+    var b = document.getElementById("play-again");
+    b.style.visibility = 'hidden';
+    b.addEventListener("click", buttonClicked, false);
     gameOver = 0;
     enemyS = 3;
     pH = 3;
@@ -188,7 +191,6 @@ var sketchProc = function(processing)
         processing.fill(color);
         processing.textSize(fontSize);
         processing.text(textToBeDisplayed, width/2 -(0.1*width), height/2+(0.1*height));
-
         drawAnim();
       }
     }
@@ -196,12 +198,14 @@ var sketchProc = function(processing)
     else if( pointDis >= 2000 && gameOver != 1)
     {
       handleWinAndLose();
+      //this assignment to prevent the draw function to enter this if condition again
+      pointDis = -1;
     }
   }
 
   function handleWinAndLose(){
     var canvas = document.getElementById("canvas1");
-    canvas.style.display = "none";
+    canvas.style.display = 'none';
     var loader = document.getElementById("load");
     loader.style.display = "visible";
   }
@@ -398,47 +402,42 @@ var sketchProc = function(processing)
     }
   }
 
-  processing.keyPressed = function()
+  function buttonClicked()
   {
-      if((processing.key == processing.CODED) && ((gameOver) || (pointDis >= 2000)))
-      {
-          if(processing.keyCode == processing.UP)
-          {
-            posX = 240;
-            laserY = 0;
-            laserX = 0;
-            enemyX = 0;
-            enemyY = 0;
-            enemyType= 0;
-            enemyH = 0;
-            enemyS = 3;
-            pH = 3;
-            gameOver = 0;
-            sl1y = 0;
-            sl2y = 0;
-            sl3y = 0;
-            sl4y = 0;
-            sl5y = 0;
-            sl6y = 0;
-            sl1x = 0;
-            sl2x = 0;
-            sl3x = 0;
-            sl4x = 0;
-            sl5x = 0;
-            sl6x = 0;
-            slS = 40;
-            mX = 0;
-            mY = height + 1;
-            i = 0;
-            pointDis = 0;
-            prevFrame = 0;
-            textToBeDisplayed = 'NA';
-            var canvas = document.getElementById("canvas1");
-            canvas.style.display = "visible";
-            var charts = document.getElementById("charts");
-            charts.style.display = "none";
-          }
-      }
+    posX = 240;
+    laserY = 0;
+    laserX = 0;
+    enemyX = 0;
+    enemyY = 0;
+    enemyType= 0;
+    enemyH = 0;
+    enemyS = 3;
+    pH = 3;
+    gameOver = 0;
+    sl1y = 0;
+    sl2y = 0;
+    sl3y = 0;
+    sl4y = 0;
+    sl5y = 0;
+    sl6y = 0;
+    sl1x = 0;
+    sl2x = 0;
+    sl3x = 0;
+    sl4x = 0;
+    sl5x = 0;
+    sl6x = 0;
+    slS = 40;
+    mX = 0;
+    mY = height + 1;
+    i = 0;
+    pointDis = 0;
+    prevFrame = 0;
+    textToBeDisplayed = 'NA';
+    var canvas = document.getElementById("canvas1");
+    canvas.style.display = 'block';
+    var charts = document.getElementById("charts");
+    charts.style.display = "none";
+    
   }
 
   progressBarColor = function(handDetected)

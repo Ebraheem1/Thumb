@@ -225,7 +225,8 @@ function directionUp(tipPosition, metacarpal) {
         doStatistics();
         drawScatterPlot();
         drawHistogram();
-        
+        var b = document.getElementById("play-again");
+        b.style.visibility = "visible";
         statflag = false;
       }
     }
