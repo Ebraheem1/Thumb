@@ -115,8 +115,7 @@ var sketchProc = function(processing)
     //most games run at 30 FPS
     processing.frameRate(30);
     importImgs();
-    var loader = document.getElementById("load");
-    loader.style.display = "none";
+    
     var b = document.getElementById("play-again");
     b.style.visibility = 'hidden';
     b.addEventListener("click", buttonClicked, false);
@@ -206,8 +205,7 @@ var sketchProc = function(processing)
   function handleWinAndLose(){
     var canvas = document.getElementById("canvas1");
     canvas.style.display = 'none';
-    var loader = document.getElementById("load");
-    loader.style.display = "visible";
+    
   }
   function drawProgressBar(){
     processing.rectMode(processing.CENTER);
@@ -317,14 +315,13 @@ var sketchProc = function(processing)
       enemyH = 2;
     } else {
       enemyY = enemyY + enemyS;
-      if (enemyY > height - 40 && pointDis < 2000) {
+      if (enemyY > height - 40 && pointDis != -1) {
         gameOver = 1;
         handleWinAndLose();
-        var parent = document.getElementById('stats');
-        var para1 = document.createElement("p");
-        var node1 = document.createTextNode("Game Over :(");
-        para1.appendChild(node1);
-        parent.appendChild(para1);
+        var charts = document.getElementById("charts");
+        var p = document.getElementById('message');
+        p.innerHTML = "Game Over :(";
+        charts.style.display = "block";
     }
     processing.image(eI,enemyX,enemyY);
     }
@@ -372,14 +369,13 @@ var sketchProc = function(processing)
     if (posX < mX + 30 && posX > mX - 30 && height - 60 > mY - 30 && height - 60 < mY + 30) {
       pH = pH - 1;
       mY = height + 30;
-      if (pH == 0) {
+      if (pH == 0 && pointDis != -1) {
         gameOver = 1;
         handleWinAndLose();
-        var parent = document.getElementById('stats');
-        var para1 = document.createElement("p");
-        var node1 = document.createTextNode("Game Over :(");
-        para1.appendChild(node1);
-        parent.appendChild(para1);
+        var charts = document.getElementById("charts");
+        charts.style.display = "block";
+        var p = document.getElementById('message');
+        p.innerHTML = "Game Over :("; 
       }
     }
   }
@@ -437,7 +433,7 @@ var sketchProc = function(processing)
     canvas.style.display = 'block';
     var charts = document.getElementById("charts");
     charts.style.display = "none";
-    
+   
   }
 
   progressBarColor = function(handDetected)

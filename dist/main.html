@@ -4,9 +4,12 @@
     </head>
     <body>
         <p><canvas id="canvas1" width="240" height="320"></canvas></p>
-        <div class="loader" id = "load"></div>
         <div id = "charts">
-            <div id ="stats" style="margin-left: 10%; background-color: gold; width: 50%"></div>
+            <div id ="stats" style="margin-left: 10%; background-color: gold; width: 50%">
+                <p id="message"></p>
+                <p id="max-time"></p>
+                <p id="threshold-times"></p>
+            </div>
             <button type="button" id ="play-again" style="margin-left: 10%; text-decoration: firebrick;"> Play Again!</button>
             <div id="scatter-plot"></div>
             <div id="Histogram"></div>
@@ -14,28 +17,5 @@
         <script src="bundle.js"></script>
     </body>
 
-    <style>
-        .loader {
-          border: 16px solid #f3f3f3;
-          border-radius: 50%;
-          border-top: 16px solid #3498db;
-          margin-bottom: "50%";
-          margin-left: "50%";
-          width: 120px;
-          height: 120px;
-          -webkit-animation: spin 2s linear infinite; /* Safari */
-          animation: spin 2s linear infinite;
-        }
-        
-        /* Safari */
-        @-webkit-keyframes spin {
-          0% { -webkit-transform: rotate(0deg); }
-          100% { -webkit-transform: rotate(360deg); }
-        }
-        
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-        </style>
+    
 </html>

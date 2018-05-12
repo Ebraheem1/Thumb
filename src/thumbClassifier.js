@@ -96,26 +96,21 @@ function doStatistics(){
     var maxTime = Math.max(...times);
     maxTime = maxTime / 1000;
     maxTime = Number.parseFloat(maxTime).toPrecision(4);
-    var parent = document.getElementById('stats');
     if(pointDis >= 2000)
     {
-      var para0 = document.createElement("p");
-      var node0 = document.createTextNode("Congratulations :)");
-      para0.appendChild(node0);
-      parent.appendChild(para0);
+      var charts = document.getElementById("charts");
+      charts.style.display = "block";
+      var p = document.getElementById('message');
+      p.innerHTML = "Congratulations :)";
+      
     }
     if(maxTime > 0)
     {
-      
-      var para1 = document.createElement("p");
-      var node1 = document.createTextNode("Max Time Taken is: "+ maxTime + " sec(s)");
-      para1.appendChild(node1);
-      parent.appendChild(para1);
+      var p = document.getElementById('max-time');
+      p.innerHTML = "Max Time Taken is: "+ maxTime + " sec(s)";
     }
-    var para2 = document.createElement("p");
-    var node2 = document.createTextNode('Threshold reached: ' + counter+ " time(s)");
-    para2.appendChild(node2);
-    parent.appendChild(para2);
+    var p = document.getElementById('threshold-times');
+    p.innerHTML = 'Threshold reached: ' + counter+ " time(s)";
 }
 
 function directionUp(tipPosition, metacarpal) {
@@ -124,7 +119,11 @@ function directionUp(tipPosition, metacarpal) {
 }
 
 (function thumbClassifierController(){
-    if( frame && (frame.hands.length == 1) && (! gameOver) && (pointDis < 2000)) {
+    if( frame && (frame.hands.length == 1) && (! gameOver) && (pointDis < 2000) && (pointDis != -1)) {
+        if(!statflag){
+          resetStats();
+        }
+        statflag = true;
         var hand = frame.hands[0];
         var palmPosition = hand.stabilizedPalmPosition[1];
         var pos = frame.pointables[1].stabilizedTipPosition;
@@ -217,7 +216,7 @@ function directionUp(tipPosition, metacarpal) {
       }
       progressBarColor(false);
     }
-    if((gameOver) || (pointDis == 2000))
+    if((gameOver) || (pointDis == 2000) || (pointDis == -1))
     {
       if(statflag)
       {
@@ -225,6 +224,7 @@ function directionUp(tipPosition, metacarpal) {
         doStatistics();
         drawScatterPlot();
         drawHistogram();
+        
         var b = document.getElementById("play-again");
         b.style.visibility = "visible";
         statflag = false;
@@ -234,11 +234,10 @@ function directionUp(tipPosition, metacarpal) {
 })();
 
 function drawScatterPlot(){
-  var loader = document.getElementById("load");
-  loader.style.display = "none";
+  
   var scatterPlot = document.getElementById("scatter-plot");
   scatterPlot.style.height = "50%";
-  scatterPlot.style.width = "80%";
+  scatterPlot.style.width = "90%";
   var scatterX = [];
   var scatterY = [];
   for(var i = 0; i < thumbIndexAngleArrCon.length; i++)
@@ -357,4 +356,26 @@ function drawHistogram() {
         text: 'Fingers (Thumb-Index Angles),DM (Distal-Medial Angles), PM(Proximal-Medial Angles) only accurate frames are considered'
       }
   });
+}
+
+
+function resetStats(){
+  times = [];
+  thumbIndexAngleArrDis = [];
+  thumbIndexAngleArrCon = [];
+  distalMedialArr = [];
+  frames = [];
+  medialProximalArr = [];
+  thumbIndexAngle = 0;
+  maxAngle = -10;
+  minAngle = 200;
+  counter = 0;
+
+  //Variables for speed detection
+  prevtime = 0;
+  timetaken = 0;
+  firstFrame = true;
+  cheatedTime = 0;
+  startcheat = 0;
+  alreadyCheating = false;
 }
