@@ -115,7 +115,8 @@ var sketchProc = function(processing)
     //most games run at 30 FPS
     processing.frameRate(30);
     importImgs();
-
+    var loader = document.getElementById("load");
+    loader.style.display = "none";
     gameOver = 0;
     enemyS = 3;
     pH = 3;
@@ -186,41 +187,24 @@ var sketchProc = function(processing)
         var fontSize = 25;
         processing.fill(color);
         processing.textSize(fontSize);
-        processing.text(textToBeDisplayed, width/4, height/2);
+        processing.text(textToBeDisplayed, width/2 -(0.1*width), height/2+(0.1*height));
 
         drawAnim();
       }
     }
-    else if (gameOver == 1 && pointDis < 2000) {
-      // var slS = pointDis*0.04 + 10;
-      // var color = processing.color(255, 255, 255);
-      // var fontSize = 25;
-      // processing.fill(color);
-      // processing.textSize(fontSize);
-      // processing.background(0, 0, 0);
-      // processing.text(maxTimeText, 25, 45);
-      // processing.text(maxAngleText, 25, 70);
-      // processing.text(minAngleText, 25, 95);
-      // processing.text(thresholdTimesText, 25, 120);
-      // processing.text('Gained Points: ' + slS, 25, 145);
-      // processing.text('Try Again Press Up :)', 25, 170);
-
-    }
+    
     else if( pointDis >= 2000 && gameOver != 1)
     {
-      var color = processing.color(0, 255, 0);
-      var fontSize = 25;
-      processing.fill(color);
-      processing.textSize(fontSize);
-      processing.background(0, 0, 0);
-      processing.text(maxTimeText, 25, 45);
-      processing.text(maxAngleText, 25, 70);
-      processing.text(minAngleText, 25, 95);
-      processing.text(thresholdTimesText, 25, 120);
-      processing.text('Congratulations Press Up To play again :)', 10, 170);
+      handleWinAndLose();
     }
   }
 
+  function handleWinAndLose(){
+    var canvas = document.getElementById("canvas1");
+    canvas.style.display = "none";
+    var loader = document.getElementById("load");
+    loader.style.display = "visible";
+  }
   function drawProgressBar(){
     processing.rectMode(processing.CENTER);
     processing.fill(progressBarRect);
@@ -331,6 +315,12 @@ var sketchProc = function(processing)
       enemyY = enemyY + enemyS;
       if (enemyY > height - 40 && pointDis < 2000) {
         gameOver = 1;
+        handleWinAndLose();
+        var parent = document.getElementById('stats');
+        var para1 = document.createElement("p");
+        var node1 = document.createTextNode("Game Over :(");
+        para1.appendChild(node1);
+        parent.appendChild(para1);
     }
     processing.image(eI,enemyX,enemyY);
     }
@@ -380,6 +370,12 @@ var sketchProc = function(processing)
       mY = height + 30;
       if (pH == 0) {
         gameOver = 1;
+        handleWinAndLose();
+        var parent = document.getElementById('stats');
+        var para1 = document.createElement("p");
+        var node1 = document.createTextNode("Game Over :(");
+        para1.appendChild(node1);
+        parent.appendChild(para1);
       }
     }
   }
@@ -437,6 +433,10 @@ var sketchProc = function(processing)
             pointDis = 0;
             prevFrame = 0;
             textToBeDisplayed = 'NA';
+            var canvas = document.getElementById("canvas1");
+            canvas.style.display = "visible";
+            var charts = document.getElementById("charts");
+            charts.style.display = "none";
           }
       }
   }

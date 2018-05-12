@@ -5,7 +5,7 @@ import {currentFrame as frame, Leap } from './leapController';
 
 // var c3 = require('c3');
 import * as C3 from 'c3';
-var smooth = require ('../smooth.js');
+
 var thumbIndexAngle = 0;
 var times = [];
 var maxAngle = -10;
@@ -16,7 +16,6 @@ var thumbIndexAngleArrDis = [];
 var thumbIndexAngleArrCon = [];
 var distalMedialArr = [];
 var medialProximalArr = [];
-var thumbIndexFunc;
 var distal_medial;
 var medial_proximal;
 //Variables for speed detection
@@ -60,77 +59,18 @@ var measuringAnglesForFiltering = function(hand)
 function doFiltering() {
   frames.forEach(frame => {
     measuringAnglesForFiltering(frame.hands[0]);
+    thumbIndexAngle = Number.parseFloat(thumbIndexAngle).toPrecision(4);
     thumbIndexAngleArrCon.push(thumbIndexAngle);
-
     if(frame.hands[0].confidence > 0.7) {
-
       thumbIndexAngleArrDis.push(thumbIndexAngle);
       distalMedialArr.push(distal_medial);
       medialProximalArr.push(medial_proximal);
     }
   });
-  if(thumbIndexAngleArrCon.length > 2)
-  {
-    //This line creates a function upon its value, we pass its x-value
-    //then it outputs the corresponding y-value.
-    //In that case: X-axis would be the interval of angles
-    //Y-axis would be the count of this interval
-    thumbIndexFunc = smooth.Smooth(thumbIndexAngleArrCon);
-  }
+  
+ 
 };
 
-// The x-axis represents the angles from 0 to 180, and each point is tha angle [n, n+4] where n is divisible by 5.
-// The y-axis represents how many times the patient reached such angle.
-function drawthumbIndexAngleHistogram() {
-  // thumbIndexAngleCount --> y-axis.
-  // the first cell in array contains the name that represents the y-axis.
-  // length of array is 37: (180/5)'the number of points' + 1 'the name of array'
-  var thumbIndexAngleCount = Array(37).fill(0);
-  thumbIndexAngleCount[0] = 'Count';
-
-  // loops through the thumbIndexAngleArrDis, which is the array that contains the thumb-index angles, it rounds the angle to the
-  // nearest integer.
-  // division by 5 to know which cell in array this angle is included to.(since each cell in thumbIndexAngleCount array is angle interval
-  // from [n, n+4])
-  for(var i = 0; i < thumbIndexAngleArrDis.length; i++) {
-  	thumbIndexAngleCount[Math.ceil(thumbIndexAngleArrDis[i]/5)]++;
-  }
-
-  // xAxis array is the angles.
-  // the first cell contains the name that represents the x-axis.
-  var xAxis = [];
-  xAxis.push['Angles'];
-
-  // each point in x-axis is the [angle, angle+4] where angle is divisible by 5
-  for(var i = 1; i < 180; i+=5) {
-  	xAxis.push(i + ' to ' +(i+4));
-  }
-
-  // removes the angles that was never reached by the patient
-  for(var i = 1; i < 37; i++) {
-  	if(thumbIndexAngleCount[i] == 0) {
-  		thumbIndexAngleCount.splice(i, 1);
-  		xAxis.splice(i, 1);
-  		i--;
-  	}
-  }
-
-  // draws the graph
-  var chart = C3.generate({
-      data: {
-          columns: [
-              thumbIndexAngleCount
-          ],
-      type: 'bar'
-      },
-      axis: {
-          x: {
-              type: 'category',
-              categories: xAxis
-          }
-      }
-  });
-}
 
 function checkThumb() {
     if(firstFrame)
@@ -155,9 +95,27 @@ function checkThumb() {
 function doStatistics(){
     var maxTime = Math.max(...times);
     maxTime = maxTime / 1000;
-    setTextEnding('Max time is: ' + Number.parseFloat(maxTime).toPrecision(4) + ' sec(s)',
-    'Max Angle is: ' + Number.parseFloat(maxAngle).toPrecision(4), 'Min Angle is: '+ Number.parseFloat(minAngle).toPrecision(4),
-    'Number of Times of thresholds are: ' + counter);
+    maxTime = Number.parseFloat(maxTime).toPrecision(4);
+    var parent = document.getElementById('stats');
+    if(pointDis >= 2000)
+    {
+      var para0 = document.createElement("p");
+      var node0 = document.createTextNode("Congratulations :)");
+      para0.appendChild(node0);
+      parent.appendChild(para0);
+    }
+    if(maxTime > 0)
+    {
+      
+      var para1 = document.createElement("p");
+      var node1 = document.createTextNode("Max Time Taken is: "+ maxTime + " sec(s)");
+      para1.appendChild(node1);
+      parent.appendChild(para1);
+    }
+    var para2 = document.createElement("p");
+    var node2 = document.createTextNode('Threshold reached: ' + counter+ " time(s)");
+    para2.appendChild(node2);
+    parent.appendChild(para2);
 }
 
 function directionUp(tipPosition, metacarpal) {
@@ -264,35 +222,34 @@ function directionUp(tipPosition, metacarpal) {
       if(statflag)
       {
         doFiltering();
-        //drawthumbIndexAngleHistogram();
-        drawCharts();
+        doStatistics();
+        drawScatterPlot();
+        drawHistogram();
+        
         statflag = false;
       }
     }
     setTimeout(thumbClassifierController, 1);
 })();
 
-function drawCharts(){
-  var canvas = document.getElementById("canvas1");
-  canvas.style.display = "none";
+function drawScatterPlot(){
+  var loader = document.getElementById("load");
+  loader.style.display = "none";
   var scatterPlot = document.getElementById("scatter-plot");
-  scatterPlot.style.backgroundColor = "lightblue";
-  scatterPlot.style.height = "200px";
-  scatterPlot.style.width = "400px";
-  // scatterPlot.setAttribute("style", "height: 200px;");
-  // scatterPlot.setAttribute("style", "width: 400px;");
+  scatterPlot.style.height = "50%";
+  scatterPlot.style.width = "80%";
   var scatterX = [];
   var scatterY = [];
   for(var i = 0; i < thumbIndexAngleArrCon.length; i++)
     scatterX.push(i+1);
   scatterX.unshift("frames");
   scatterY = thumbIndexAngleArrCon;
-  scatterY.unshift("angles");
+  scatterY.unshift("Angles");
   var scatterChart = C3.generate({
     bindto: scatterPlot,
     data: {
         xs: {
-            angles: 'frames'
+            Angles: 'frames'
         },
         columns: [
             scatterX,
@@ -300,57 +257,103 @@ function drawCharts(){
         ],
         type: 'scatter',
         colors: {
-          angles: '#00ff00'
+          Angles: '#9F3030'
       }
     },
     axis: {
         x: {
-            label: 'Valid Frames with order',
+            label: 'Ordered Frames',
             tick: {
                 fit: false
             }
         },
         y: {
-            label: 'Corresponding Angle'
+            label: 'Angle'
         }
+    },
+    title: {
+      text: 'Angle between Thumb and Index in general'
     }
   });
 };
+// The x-axis represents the angles from 0 to 180, and each point is tha angle [n, n+4] where n is divisible by 5.
+// The y-axis represents how many times the patient reached such angle.
+function drawHistogram() {
+  // thumbIndexAngleCount --> y-axis.
+  // the first cell in array contains the name that represents the y-axis.
+  // length of array is 37: (180/5)'the number of points' + 1 'the name of array'
+  var thumbIndexAngleCount = Array(37).fill(0);
+  var distalMedialCount = Array(37).fill(0);
+  var proximalMedialCount = Array(37).fill(0);
+  thumbIndexAngleCount[0] = 'Fingers';
+  distalMedialCount[0] = 'DM';
+  proximalMedialCount[0] = 'PM';
 
+  
+  for(var i = 0; i < thumbIndexAngleArrDis.length; i++) {
+  	thumbIndexAngleCount[Math.ceil(thumbIndexAngleArrDis[i]/5)]++;
+  }
+  for(var i = 0; i < distalMedialArr.length; i++) {
+  	distalMedialCount[Math.ceil(distalMedialArr[i]/5)]++;
+  }
+  for(var i = 0; i < medialProximalArr.length; i++) {
+  	proximalMedialCount[Math.ceil(medialProximalArr[i]/5)]++;
+  }
+  
+  // xAxis array is the angles.
+  // the first cell contains the name that represents the x-axis.
+  var xAxis = [];
+  xAxis.push['Angles'];
+  
+  // each point in x-axis is the [angle, angle+4] where angle is divisible by 5
+  for(var i = 1; i < 180; i+=5) {
+    var s = i + ' to ' +(i+4);
+    xAxis.push(s);
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
+  // removes the angles that was never reached by the patient
+  for(var i = 1; i < 37; i++) {
+    var condition = (thumbIndexAngleCount[i] == 0) && (distalMedialCount[i] == 0) && (proximalMedialCount[i] == 0);
+  	if(condition) {
+      thumbIndexAngleCount.splice(i, 1);
+      distalMedialCount.splice(i, 1);
+      proximalMedialCount.splice(i, 1);
+  		xAxis.splice(i, 1);
+  		i--;
+  	}
+  }
+  
+  var histoDiv = document.getElementById("Histogram");
+  // // draws the graph
+  histoDiv.style.height = "50%";
+  histoDiv.style.width = "80%";
+  var chart = C3.generate({
+      bindto: histoDiv,
+      data: {
+          columns: [
+              thumbIndexAngleCount,
+              distalMedialCount,
+              proximalMedialCount
+          ],
+      type: 'bar'
+      },
+      colors: {
+        Fingers: '#ff0000',
+        DM: '#00ff00',
+        PM: '#0000ff'
+      },
+      axis: {
+          x: {
+              type: 'category',
+              categories: xAxis,
+              label: "Angles"
+          },
+          y: {
+            label: "Count"
+          }
+      },
+      title: {
+        text: 'Fingers (Thumb-Index Angles),DM (Distal-Medial Angles), PM(Proximal-Medial Angles) only accurate frames are considered'
+      }
+  });
+}
