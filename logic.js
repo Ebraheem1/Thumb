@@ -87,6 +87,14 @@ var sketchProc = function(processing)
   var rotateclockwiseframe = 0;
   var rotateclockwiselastframe = 0;
 
+  var raisehand = [];
+  var raisehandframe = 0;
+  var raisehandlastframe = 0;
+
+  var grabstrength = [];
+  var grabstrengthframe = 0;
+  var grabstrengthlastframe = 0;
+
   //Cheating Variables
   textToBeDisplayed = 'NA';
 
@@ -115,7 +123,7 @@ var sketchProc = function(processing)
     //most games run at 30 FPS
     processing.frameRate(30);
     importImgs();
-    
+
     var b = document.getElementById("play-again");
     b.style.visibility = 'hidden';
     b.addEventListener("click", buttonClicked, false);
@@ -159,6 +167,16 @@ var sketchProc = function(processing)
       var tmp = processing.loadImage("../pic/rotateclockwise/frame_" + processing.nf(i, 2) + "_delay-0.1s.gif");
       rotateclockwise.push(tmp);
     }
+
+    for(var i = 0; i < 24; i++) {
+      var tmp = processing.loadImage("../pic/raisehand/frame_" + processing.nf(i, 2) + "_delay-0.1s.gif");
+      raisehand.push(tmp);
+    }
+
+    for(var i = 0; i < 28; i++) {
+      var tmp = processing.loadImage("../pic/grabstrength/frame_" + processing.nf(i, 2) + "_delay-0.1s.gif");
+      grabstrength.push(tmp);
+    }
   }
 
   //done every tick (30 FPS)
@@ -193,7 +211,6 @@ var sketchProc = function(processing)
         drawAnim();
       }
     }
-    
     else if( pointDis >= 2000 && gameOver != 1)
     {
       handleWinAndLose();
@@ -205,8 +222,8 @@ var sketchProc = function(processing)
   function handleWinAndLose(){
     var canvas = document.getElementById("canvas1");
     canvas.style.display = 'none';
-    
   }
+
   function drawProgressBar(){
     processing.rectMode(processing.CENTER);
     processing.fill(progressBarRect);
@@ -266,6 +283,32 @@ var sketchProc = function(processing)
         rotateclockwiselastframe++;
       } else {
         rotateclockwiselastframe = 0;
+      }
+    } else if(textToBeDisplayed == 'Please, Raise your hand a bit more :)') {
+      raisehandframe = (raisehandframe + 1) % raisehand.length;
+
+      processing.imageMode(processing.CENTER);
+      var img = raisehand[raisehandframe];
+      processing.image(img, width/2, height/2 - img.height/2);
+
+      if(raisehandframe == 23 && raisehandlastframe < 20) {
+        raisehandframe = 22;
+        raisehandlastframe++;
+      } else {
+        raisehandlastframe = 0;
+      }
+    } else if(textToBeDisplayed == 'Please Stretch Your Fingers') {
+      grabstrengthframe = (grabstrengthframe + 1) % grabstrength.length;
+
+      processing.imageMode(processing.CENTER);
+      var img = grabstrength[grabstrengthframe];
+      processing.image(img, width/2, height/2 - img.height/2);
+
+      if(grabstrengthframe == 27 && grabstrengthlastframe < 20) {
+        grabstrengthframe = 26;
+        grabstrengthlastframe++;
+      } else {
+        grabstrengthlastframe = 0;
       }
     }
   }
@@ -375,7 +418,7 @@ var sketchProc = function(processing)
         var charts = document.getElementById("charts");
         charts.style.display = "block";
         var p = document.getElementById('message');
-        p.innerHTML = "Game Over :("; 
+        p.innerHTML = "Game Over :(";
       }
     }
   }
@@ -433,7 +476,7 @@ var sketchProc = function(processing)
     canvas.style.display = 'block';
     var charts = document.getElementById("charts");
     charts.style.display = "none";
-   
+
   }
 
   progressBarColor = function(handDetected)
